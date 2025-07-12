@@ -6975,9 +6975,9 @@ class Activity {
                         body: JSON.stringify({ repoName, projectData, theme })
                     });
                     if (response.ok) {
-                        activity.textMsg(_("Project created successfuly"),3000);
+                        activity.textMsg(_("Project created successfuly"), 3000);
                     } else {
-                        activity.textMsg(_("Failed to create the project"),3000);
+                        activity.textMsg(_("Failed to create the project"), 3000);
                     }
                     const data = await response.json();
                     localStorage.setItem("key", data.key);
@@ -6987,16 +6987,18 @@ class Activity {
                     const repoName = localStorage.getItem("repoName");
                     const key = localStorage.getItem("key");
                     const projectData = activity.prepareExport();
+                    const commitMessage = prompt(
+                        "Enter the detailed commit Message, what does this change do?"
+                    );
                     const response = await fetch("http://localhost:3000/api/github/edit", {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ repoName, key, projectData })
+                        body: JSON.stringify({ repoName, key, projectData, commitMessage })
                     });
-                    if(response.ok){
-                        activity.textMsg(_("Repository edited successfully"),2000);
-                    }
-                    else{
-                        activity.textMsg(_("failed to edit repository"),3000)
+                    if (response.ok) {
+                        activity.textMsg(_("Repository edited successfully"), 2000);
+                    } else {
+                        activity.textMsg(_("failed to edit repository"), 3000);
                     }
                     const data = await response.json();
                     console.log(data);
