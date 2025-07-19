@@ -180,19 +180,14 @@
           btn.addEventListener("click", async (e) => {
             e.preventDefault();
             try {
-              const apiRes = await fetch(`http://localhost:3000/api/github/fork`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ repositoryName: repo.name })
-              });
+              const apiRes = await fetch(`http://localhost:3000/api/github/getProjectData?repoName=${repo.name}`);
+              console.log("response sent to ",repo.name)
               if (!apiRes.ok) throw new Error("API error");
               const data = await apiRes.json();
-              alert(data.repoName);
-              localStorage.setItem("musicblocks_blocks", JSON.stringify(data.projectData));
-              localStorage.setItem("repoName", data.repoName);
-              localStorage.setItem("key", data.key);
+              console.log(data.content.projectData);
+              localStorage.setItem("musicblocks_blocks", data.content.projectData);
+              localStorage.setItem("SESSIONMy Project", data.content.projectData);
+
 
               window.location.href = "index.html";
             } catch (err) {

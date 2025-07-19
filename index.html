@@ -1046,6 +1046,7 @@
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         const blocks = localStorage.getItem("musicblocks_blocks");
+        console.log(blocks);
         if (blocks) {
           const blocksJson = JSON.parse(blocks);
           activity.blocks.loadNewBlocks(blocksJson);
@@ -1149,7 +1150,6 @@
               if (data) {
                 activity.sendAllToTrash();
                 activity.blocks.loadNewBlocks(JSON.parse(data));
-                activity.
                 activity.textMsg(_("Loaded project from selected commit."), 3000);
                 modal.remove();
               } else {
@@ -1157,7 +1157,6 @@
               }
             } catch (e) {
               console.error("Error loading version:", e);
-              alert("Failed to load that version.");
             }
           };
 

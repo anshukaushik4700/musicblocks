@@ -6969,10 +6969,11 @@ class Activity {
                     const repoName = prompt("Enter repo name");
                     const projectData = activity.prepareExport();
                     const theme = "music";
+                    const description = prompt("enter description for your project")
                     const response = await fetch("http://localhost:3000/api/github/create", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ repoName, projectData, theme })
+                        body: JSON.stringify({ repoName, projectData, theme, description})
                     });
                     if (response.ok) {
                         activity.textMsg(_("Project created successfuly"), 3000);
