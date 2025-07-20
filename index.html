@@ -676,6 +676,7 @@
             <li><a id="initRepo">Initialise a Repo</a></li>
             <li><a id="editProject">Edit project</a></li>
             <li><a id="getCommit">Get commits</a></li>
+            <li><a id="forkProject">Fork this project</a></li>
           </ul>
 
           <ul id="saveddropdown" class="dropdown-content">
@@ -1170,6 +1171,31 @@
         modal.appendChild(inner);
         document.body.appendChild(modal);
       });
+      document.getElementById("forkProject").addEventListener("click",async()=>{
+        const originalRepoName = localStorage.getItem("repoName");
+        if(!originalRepoName){
+          alert("go to projects page to fork a project");
+        }
+        const result = await fetch("http://localhost:3000/api/github/forkHistory",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({sourceRepo:originalRepoName})
+        })
+        console.log(result);
+        const data = await result.json();
+        console.log(data);
+        if(data.success){
+          activity.textMsg(_("Project forked"),3000);
+          alert(data.repoUrl.repoName);
+          localStorage.setItem("repoName",data.repoUrl.repoName);
+          localStorage.setItem("key",data.repoUrl.key);
+          activity.textMsg("Project loaded");
+        }
+        
+
+      })
     </script>
   </body>
 </html>
