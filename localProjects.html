@@ -93,7 +93,7 @@
   </head>
   <body>
     <header>
-      <h1>Explore Music Blocks Projects</h1>
+      <h1>Your Local Projects</h1>
       <input
         type="text"
         id="search"
@@ -125,20 +125,15 @@ async function loadRepos() {
 
   try {
     while (true) {
-      const res = await fetch(
-        `https://api.github.com/orgs/musicblocks-projects/repos?per_page=${perPage}&page=${page}`
-      );
+      const res = JSON.parse(localStorage.getItem("all"));
 
-      if (!res.ok) {
-        throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
-      }
-
-      const repos = await res.json();
+      const repos = res;
+      console.log(repos);
 
       if (!Array.isArray(repos)) {
         console.error("Unexpected response format:", repos);
         document.getElementById("loading").innerText =
-          "Failed to load projects. Please try again later.";
+          "No projects";
         return;
       }
 
@@ -169,6 +164,7 @@ async function loadRepos() {
         cards.innerHTML = ""; //clearing previous cards
 
         repos.forEach((repo) => {
+          console.log(repo);
           const card = document.createElement("div");
           card.className = "card";
 
@@ -181,7 +177,7 @@ async function loadRepos() {
 
           const title = document.createElement("h2");
           title.className = "card-title";
-          title.textContent = repo.name;
+          title.textContent = repo.projectName;
 
           const desc = document.createElement("p");
           desc.className = "card-desc";
@@ -197,11 +193,19 @@ async function loadRepos() {
           btn.addEventListener("click", async (e) => {
             e.preventDefault();
             try {
-              const apiRes = await fetch(`http://localhost:3000/api/github/getProjectData?repoName=${repo.name}`);
-              console.log("response sent to ",repo.name)
+              const apiRes = await fetch(`http://localhost:3000/api/github/getProjectData?repoName=${repo.projectName}`);
+              console.log("response sent to ",repo.projectName)
+              localStorage.setItem("currProject",repo.projectName);
+              const allProjects = JSON.parse(localStorage.getItem("all"));
+              const thisProjectKey = allProjects.find((project)=>{
+                if(project.projectName == repo.projectName){
+                  return project.key;
+                }
+              })
+              localStorage.setItem("currKey",thisProjectKey.key);
               if (!apiRes.ok) throw new Error("API error");
               const data = await apiRes.json();
-              console.log(data.content.projectData);
+              alert(data.content.projectData);
               localStorage.setItem("repoName",repo.name);
               localStorage.setItem("musicblocks_blocks", data.content.projectData);
               localStorage.setItem("SESSIONMy Project", data.content.projectData);

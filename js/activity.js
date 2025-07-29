@@ -6975,8 +6975,22 @@ class Activity {
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ repoName, projectData, theme, description})
                     });
+                    const data1 = await response.json();
                     if (response.ok) {
                         activity.textMsg(_("Project created successfuly"), 3000);
+                        let a = JSON.parse(localStorage.getItem("all"));
+                        const projectName = data1.repository;
+                        const key = data1.key;
+                        
+                        const obj = {projectName,key,description};
+                        localStorage.setItem("currProject",data1.repository);
+                        localStorage.setItem("currKey",data1.key);
+                        if(a == undefined || a == null){
+                            localStorage.setItem("all",JSON.stringify([obj]));
+                        }
+                        else{
+                            localStorage.setItem("all",JSON.stringify([...a,obj]));
+                        }
                     } else {
                         activity.textMsg(_("Failed to create the project"), 3000);
                     }
@@ -6985,8 +6999,8 @@ class Activity {
                     localStorage.setItem("repoName", repoName);
                 },
                 async function (activity) {
-                    const repoName = localStorage.getItem("repoName");
-                    const key = localStorage.getItem("key");
+                    const repoName = localStorage.getItem("currProject");
+                    const key = localStorage.getItem("currKey");
                     const projectData = activity.prepareExport();
                     const commitMessage = prompt(
                         "Enter the detailed commit Message, what does this change do?"

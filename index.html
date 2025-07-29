@@ -466,7 +466,10 @@
                     data-position="left"
                     data-activates="github"
                   >
-                    <i class="material-icons md-48">star</i>
+                  <img src="./git.svg" 
+                  width="50"
+                  style="margin-top: 10px; padding: 0;"
+                  />
                   </a>
                 </li>
                 <li>
@@ -674,7 +677,7 @@
           </ul>
           <ul id="github" class="dropdown-content">
             <li><a id="initRepo">Initialise a Repo</a></li>
-            <li><a id="editProject">Edit project</a></li>
+            <li><a id="editProject">Push changes</a></li>
             <li><a id="getCommit">Get commits</a></li>
             <li><a id="forkProject">Fork this project</a></li>
           </ul>
@@ -1056,7 +1059,7 @@
         }
       });
       document.querySelector("#getCommit")?.addEventListener("click", async function () {
-        const repoName = localStorage.getItem("repoName");
+        const repoName = localStorage.getItem("currProject");
         if (!repoName) {
           activity.textMsg(_("No repository found in local storage."), 3000);
           return;
@@ -1189,8 +1192,19 @@
         if(data.success){
           activity.textMsg(_("Project forked"),3000);
           alert(data.repoUrl.repoName);
-          localStorage.setItem("repoName",data.repoUrl.repoName);
-          localStorage.setItem("key",data.repoUrl.key);
+          let a = JSON.parse(localStorage.getItem("all"));
+          const key = data.repoUrl.key;
+          const projectName = data.repoUrl.repoName;
+          const description = data.repoUrl.description;
+          const obj = {key,projectName,description};
+          if(a == undefined || a == null){
+            localStorage.setItem("all",JSON.stringify([obj]));
+          }
+          else{
+             localStorage.setItem("all",JSON.stringify([...a,obj]));
+          }
+          localStorage.setItem("currProject",data.repoUrl.repoName);
+          localStorage.setItem("currKey",data.repoUrl.key);
           activity.textMsg("Project loaded");
         }
         
