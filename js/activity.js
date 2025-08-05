@@ -6968,7 +6968,7 @@ class Activity {
                 async function (activity) {
                     const repoName = prompt("Enter repo name");
                     const projectData = activity.prepareExport();
-                    const theme = "music";
+                    const theme = prompt("Enter theme for the project Eg Music, art, math etc. (comma separated)");
                     const description = prompt("enter description for your project")
                     const response = await fetch("http://localhost:3000/api/github/create", {
                         method: "POST",

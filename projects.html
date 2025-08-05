@@ -89,6 +89,23 @@
           height: 100px;
         }
       }
+      .card-topics {
+        margin: 8px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .topic-badge {
+        background-color: #ddf4ff;
+        color: #0969da;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid #b6e3ff;
+        user-select: none;
+      }
     </style>
   </head>
   <body>
@@ -118,48 +135,46 @@
     </div>
 
     <script>
-async function loadRepos() {
-  let allRepos = [];
-  let page = 1;
-  const perPage = 100;
+      let allRepos = [];
+      async function loadRepos() {
+        let page = 1;
+        const perPage = 50;
 
-  try {
-    while (true) {
-      const res = await fetch(
-        `https://api.github.com/orgs/musicblocks-projects/repos?per_page=${perPage}&page=${page}`
-      );
+        try {
+          while (true) {
+            const res = await fetch(`http://localhost:3000/api/github/allRepos?page=${page}`);
 
-      if (!res.ok) {
-        throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
+            if (!res.ok) {
+              throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
+            }
+
+            const response = await res.json();
+            const repos = response.data;
+
+            if (!Array.isArray(repos)) {
+              console.error("Unexpected response format:", repos);
+              document.getElementById("loading").innerText =
+                "Failed to load projects. Please try again later.";
+              return;
+            }
+
+            allRepos.push(...repos);
+
+            if (repos.length < perPage) {
+              // No more pages
+              break;
+            }
+
+            page++;
+          }
+
+          renderCards(allRepos);
+        } catch (error) {
+          console.error("Failed to fetch repos:", error);
+          document.getElementById("loading").innerText =
+            "Error loading projects. Please try again later.";
+        }
       }
-
-      const repos = await res.json();
-
-      if (!Array.isArray(repos)) {
-        console.error("Unexpected response format:", repos);
-        document.getElementById("loading").innerText =
-          "Failed to load projects. Please try again later.";
-        return;
-      }
-
-      allRepos.push(...repos);
-
-      if (repos.length < perPage) {
-        // No more pages
-        break;
-      }
-
-      page++;
-    }
-
-    renderCards(allRepos);
-
-  } catch (error) {
-    console.error("Failed to fetch repos:", error);
-    document.getElementById("loading").innerText =
-      "Error loading projects. Please try again later.";
-  }
-}
 
       function renderCards(repos) {
         const cards = document.getElementById("cards");
@@ -186,6 +201,17 @@ async function loadRepos() {
           const desc = document.createElement("p");
           desc.className = "card-desc";
           desc.textContent = repo.description || "No description";
+          const topicsContainer = document.createElement("div");
+          topicsContainer.className = "card-topics";
+
+          if (repo.topics && repo.topics.length > 0) {
+            repo.topics.forEach((topic) => {
+              const topicBadge = document.createElement("span");
+              topicBadge.className = "topic-badge";
+              topicBadge.textContent = topic;
+              topicsContainer.appendChild(topicBadge);
+            });
+          }
 
           const actions = document.createElement("div");
           actions.className = "card-actions";
@@ -197,15 +223,16 @@ async function loadRepos() {
           btn.addEventListener("click", async (e) => {
             e.preventDefault();
             try {
-              const apiRes = await fetch(`http://localhost:3000/api/github/getProjectData?repoName=${repo.name}`);
-              console.log("response sent to ",repo.name)
+              const apiRes = await fetch(
+                `http://localhost:3000/api/github/getProjectData?repoName=${repo.name}`
+              );
+              console.log("response sent to ", repo.name);
               if (!apiRes.ok) throw new Error("API error");
               const data = await apiRes.json();
               console.log(data.content.projectData);
-              localStorage.setItem("repoName",repo.name);
+              localStorage.setItem("repoName", repo.name);
               localStorage.setItem("musicblocks_blocks", data.content.projectData);
               localStorage.setItem("SESSIONMy Project", data.content.projectData);
-
 
               window.location.href = "index.html";
             } catch (err) {
@@ -215,7 +242,7 @@ async function loadRepos() {
           });
 
           actions.appendChild(btn);
-          content.append(title, desc, actions);
+          content.append(title, desc, topicsContainer, actions);
           card.append(img, content);
           cards.appendChild(card);
         });
@@ -225,11 +252,20 @@ async function loadRepos() {
         if (searchInput) {
           searchInput.addEventListener("input", (e) => {
             const value = e.target.value.toLowerCase();
-            const filtered = allRepos.filter((repo) => repo.name.toLowerCase().includes(value));
+
+            const filtered = allRepos.filter((repo) => {
+              const nameMatch = repo.name.toLowerCase().includes(value);
+              const topicMatch =
+                Array.isArray(repo.topics) &&
+                repo.topics.some((topic) => topic.toLowerCase().includes(value));
+              return nameMatch || topicMatch;
+            });
+
             renderCards(filtered);
           });
         }
       });
+
       loadRepos();
     </script>
   </body>
