@@ -205,7 +205,6 @@ async function loadRepos() {
               localStorage.setItem("currKey",thisProjectKey.key);
               if (!apiRes.ok) throw new Error("API error");
               const data = await apiRes.json();
-              alert(data.content.projectData);
               localStorage.setItem("repoName",repo.name);
               localStorage.setItem("musicblocks_blocks", data.content.projectData);
               localStorage.setItem("SESSIONMy Project", data.content.projectData);

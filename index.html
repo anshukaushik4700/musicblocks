@@ -1055,6 +1055,7 @@
         const blocks = localStorage.getItem("musicblocks_blocks");
         console.log(blocks);
         if (blocks) {
+          activity.sendAllToTrash();
           const blocksJson = JSON.parse(blocks);
           activity.blocks.loadNewBlocks(blocksJson);
           activity.textMsg(_("Blocks loaded"));
