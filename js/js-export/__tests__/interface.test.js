@@ -128,7 +128,7 @@ describe("JSInterface", () => {
             jest.clearAllMocks();
         });
 
-        test("returns original args when no constraints defined", () => {
+        it("returns original args when no constraints defined", () => {
             JSInterface._methodArgConstraints = {};
             expect(JSInterface.validateArgs("nonExistingMethod", [1, 2, 3])).toEqual([1, 2, 3]);
         });
@@ -140,11 +140,11 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("converts numeric string to number", () => {
+            it("converts numeric string to number", () => {
                 expect(JSInterface.validateArgs("testMethod", ["42"])[0]).toBe(42);
             });
 
-            test("throws on non-numeric string when number expected", () => {
+            it("throws on non-numeric string when number expected", () => {
                 expect(() => JSInterface.validateArgs("testMethod", ["abc"])).toThrow(
                     'TypeMismatch error: expected "number" but found "string"'
                 );
@@ -158,15 +158,15 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("converts 'true' string to true", () => {
+            it("converts 'true' string to true", () => {
                 expect(JSInterface.validateArgs("testMethod", ["true"])[0]).toBe(true);
             });
 
-            test("converts 'false' string to false", () => {
+            it("converts 'false' string to false", () => {
                 expect(JSInterface.validateArgs("testMethod", ["false"])[0]).toBe(false);
             });
 
-            test("resets invalid boolean string to true and logs", () => {
+            it("resets invalid boolean string to true and logs", () => {
                 const result = JSInterface.validateArgs("testMethod", ["maybe"]);
                 expect(result[0]).toBe(true);
                 expect(JSEditor.logConsole).toHaveBeenCalled();
@@ -180,7 +180,7 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("throws TypeMismatch when boolean passed for number", () => {
+            it("throws TypeMismatch when boolean passed for number", () => {
                 expect(() => JSInterface.validateArgs("testMethod", [true])).toThrow(
                     'TypeMismatch error: expected "number" but found "boolean"'
                 );
@@ -199,15 +199,15 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("accepts number when multiple types allowed", () => {
+            it("accepts number when multiple types allowed", () => {
                 expect(JSInterface.validateArgs("testMethod", [50])[0]).toBe(50);
             });
 
-            test("accepts string when multiple types allowed", () => {
+            it("accepts string when multiple types allowed", () => {
                 expect(JSInterface.validateArgs("testMethod", ["hello"])[0]).toBe("hello");
             });
 
-            test("throws when no type matches in multiple types", () => {
+            it("throws when no type matches in multiple types", () => {
                 expect(() => JSInterface.validateArgs("testMethod", [true])).toThrow(
                     /TypeMismatch error: expected one of/
                 );
@@ -223,19 +223,19 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("clamps below min and logs", () => {
+            it("clamps below min and logs", () => {
                 const result = JSInterface.validateArgs("testMethod", [-5]);
                 expect(result[0]).toBe(0);
                 expect(JSEditor.logConsole).toHaveBeenCalled();
             });
 
-            test("clamps above max and logs", () => {
+            it("clamps above max and logs", () => {
                 const result = JSInterface.validateArgs("testMethod", [150]);
                 expect(result[0]).toBe(100);
                 expect(JSEditor.logConsole).toHaveBeenCalled();
             });
 
-            test("passes value within range unchanged", () => {
+            it("passes value within range unchanged", () => {
                 expect(JSInterface.validateArgs("testMethod", [50])[0]).toBe(50);
             });
         });
@@ -249,13 +249,13 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("floors non-integer and logs", () => {
+            it("floors non-integer and logs", () => {
                 const result = JSInterface.validateArgs("testMethod", [3.7]);
                 expect(result[0]).toBe(3);
                 expect(JSEditor.logConsole).toHaveBeenCalled();
             });
 
-            test("passes integer unchanged", () => {
+            it("passes integer unchanged", () => {
                 expect(JSInterface.validateArgs("testMethod", [4])[0]).toBe(4);
             });
         });
@@ -267,13 +267,13 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("throws when non-async function passed", () => {
+            it("throws when non-async function passed", () => {
                 expect(() => JSInterface.validateArgs("testMethod", [function () {}])).toThrow(
                     /expected "async" function/
                 );
             });
 
-            test("accepts async function", () => {
+            it("accepts async function", () => {
                 const result = JSInterface.validateArgs("testMethod", [async function () {}]);
                 expect(typeof result[0]).toBe("function");
             });
@@ -286,26 +286,26 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("accepts solfege note", () => {
+            it("accepts solfege note", () => {
                 expect(JSInterface.validateArgs("testMethod", ["sol"])[0]).toBe("sol");
             });
 
-            test("accepts letter note and uppercases it", () => {
+            it("accepts letter note and uppercases it", () => {
                 expect(JSInterface.validateArgs("testMethod", ["c"])[0]).toBe("C");
             });
 
-            test("resets invalid note to sol and logs", () => {
+            it("resets invalid note to sol and logs", () => {
                 const result = JSInterface.validateArgs("testMethod", ["xyz"]);
                 expect(result[0]).toBe("sol");
                 expect(JSEditor.logConsole).toHaveBeenCalled();
             });
 
-            test("handles solfege with sharp accidental", () => {
+            it("handles solfege with sharp accidental", () => {
                 const result = JSInterface.validateArgs("testMethod", ["sol ♯"]);
                 expect(result[0]).toBe("sol♯");
             });
 
-            test("handles letter with flat accidental", () => {
+            it("handles letter with flat accidental", () => {
                 const result = JSInterface.validateArgs("testMethod", ["c ♭"]);
                 expect(result[0]).toBe("C♭");
             });
@@ -318,17 +318,17 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("accepts SHARP symbol and returns sharp output", () => {
+            it("accepts SHARP symbol and returns sharp output", () => {
                 const result = JSInterface.validateArgs("testMethod", ["♯"]);
                 expect(result[0]).toContain("sharp");
             });
 
-            test("accepts 'flat' string and returns flat output", () => {
+            it("accepts 'flat' string and returns flat output", () => {
                 const result = JSInterface.validateArgs("testMethod", ["flat"]);
                 expect(result[0]).toContain("flat");
             });
 
-            test("passes unknown accidental unchanged", () => {
+            it("passes unknown accidental unchanged", () => {
                 const result = JSInterface.validateArgs("testMethod", ["unknown"]);
                 expect(result[0]).toBe("unknown");
             });
@@ -350,11 +350,11 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("accepts valid value case-insensitively", () => {
+            it("accepts valid value case-insensitively", () => {
                 expect(JSInterface.validateArgs("testMethod", ["FAST"])[0]).toBe("fast");
             });
 
-            test("resets invalid value to default and logs", () => {
+            it("resets invalid value to default and logs", () => {
                 const result = JSInterface.validateArgs("testMethod", ["invalid"]);
                 expect(result[0]).toBe("medium");
                 expect(JSEditor.logConsole).toHaveBeenCalled();
@@ -368,11 +368,11 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("accepts valid instrument", () => {
+            it("accepts valid instrument", () => {
                 expect(JSInterface.validateArgs("testMethod", ["piano"])[0]).toBe("piano");
             });
 
-            test("resets invalid instrument to DEFAULTVOICE and logs", () => {
+            it("resets invalid instrument to DEFAULTVOICE and logs", () => {
                 const result = JSInterface.validateArgs("testMethod", ["kazoo"]);
                 expect(result[0]).toBe("sine");
                 expect(JSEditor.logConsole).toHaveBeenCalled();
@@ -386,13 +386,13 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("accepts valid drum", () => {
+            it("accepts valid drum", () => {
                 expect(JSInterface.validateArgs("testMethod", ["snare drum"])[0]).toBe(
                     "snare drum"
                 );
             });
 
-            test("resets invalid drum to kick drum and logs", () => {
+            it("resets invalid drum to kick drum and logs", () => {
                 const result = JSInterface.validateArgs("testMethod", ["bongo"]);
                 expect(result[0]).toBe("kick drum");
                 expect(JSEditor.logConsole).toHaveBeenCalled();
@@ -406,19 +406,19 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("converts white noise to noise1", () => {
+            it("converts white noise to noise1", () => {
                 expect(JSInterface.validateArgs("testMethod", ["white noise"])[0]).toBe("noise1");
             });
 
-            test("converts brown noise to noise2", () => {
+            it("converts brown noise to noise2", () => {
                 expect(JSInterface.validateArgs("testMethod", ["brown noise"])[0]).toBe("noise2");
             });
 
-            test("converts pink noise to noise3", () => {
+            it("converts pink noise to noise3", () => {
                 expect(JSInterface.validateArgs("testMethod", ["pink noise"])[0]).toBe("noise3");
             });
 
-            test("resets invalid noise to noise1 and logs", () => {
+            it("resets invalid noise to noise1 and logs", () => {
                 const result = JSInterface.validateArgs("testMethod", ["loud noise"]);
                 expect(result[0]).toBe("noise1");
                 expect(JSEditor.logConsole).toHaveBeenCalled();
@@ -432,17 +432,17 @@ describe("JSInterface", () => {
                 };
             });
 
-            test("accepts valid letter key and uppercases it", () => {
+            it("accepts valid letter key and uppercases it", () => {
                 expect(JSInterface.validateArgs("testMethod", ["c"])[0]).toBe("C");
             });
 
-            test("resets invalid letter key to C and logs", () => {
+            it("resets invalid letter key to C and logs", () => {
                 const result = JSInterface.validateArgs("testMethod", ["x"]);
                 expect(result[0]).toBe("C");
                 expect(JSEditor.logConsole).toHaveBeenCalled();
             });
 
-            test("handles letter key with sharp accidental", () => {
+            it("handles letter key with sharp accidental", () => {
                 const result = JSInterface.validateArgs("testMethod", ["g ♯"]);
                 expect(result[0]).toBe("G♯");
             });
