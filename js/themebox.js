@@ -173,6 +173,14 @@ class ThemeBox {
         // Refresh UI components that depend on platformColor
         this.refreshUIComponents();
 
+         setTimeout(() => {
+            const BASE_TOP = 76;
+            const topRightButtons = document.querySelectorAll("#buttoncontainerTOP .tooltipped");
+            topRightButtons.forEach(btn => {
+                btn.style.top = (BASE_TOP + globalActivity.toolbarHeight) + "px";
+            });
+        }, 50);
+
         // Notify user
         this.activity.textMsg(_("Theme switched to " + this._theme + " mode."), 2000);
     }
