@@ -1193,11 +1193,17 @@ class Toolbar {
         const editProject = docById("editProject");
 
         if (initRepo) {
-            initRepo.onclick = () => initRepo_onclick(this.activity);
-        }
-        if (editProject) {
-            editProject.onclick = () => editProject_onclick(this.activity);
-        }
+    initRepo.onclick = () => {
+        initRepo_onclick(this.activity);
+        GitEducation.showTutorial('firstSave');
+    };
+}
+       if (editProject) {
+    editProject.onclick = () => {
+        editProject_onclick(this.activity);
+        GitEducation.showTutorial('firstSave');
+    };
+}
     }
 }
 

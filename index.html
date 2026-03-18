@@ -1159,6 +1159,7 @@
                 activity.sendAllToTrash();
                 activity.blocks.loadNewBlocks(JSON.parse(data));
                 activity.textMsg(_("Loaded project from selected commit."), 3000);
+                GitEducation.showTutorial('firstVersionTravel');
                 modal.remove();
               } else {
                 alert("Could not load that version.");
@@ -1177,6 +1178,7 @@
 
         modal.appendChild(inner);
         document.body.appendChild(modal);
+        GitEducation.showTutorial('firstHistory');
       });
       document.getElementById("forkProject").addEventListener("click",async()=>{
         const originalRepoName = localStorage.getItem("repoName");
@@ -1195,6 +1197,7 @@
         console.log(data);
         if(data.success){
           activity.textMsg(_("Project forked"),3000);
+          GitEducation.showTutorial('firstFork');
           alert(data.repoUrl.repoName);
           let a = JSON.parse(localStorage.getItem("all"));
           const key = data.repoUrl.key;
@@ -1230,6 +1233,7 @@ document.body.appendChild(link);
 link.click();
 document.body.removeChild(link);
 });
-    </script>
+</script>
+<script src="js/gitEducation.js"></script>
   </body>
 </html>
