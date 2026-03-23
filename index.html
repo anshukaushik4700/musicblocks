@@ -683,6 +683,7 @@
             <li><a id="downloadProject">Download the project</a></li>
             <li><a href="localProjects.html">Your Projects</a></li>
             <li><a href="projects.html">All Projects</a></li>
+            <li><a id="migratePlanet">Migrate from Planet</a></li>
           </ul>
 
           <ul id="saveddropdown" class="dropdown-content">
@@ -1233,7 +1234,13 @@ document.body.appendChild(link);
 link.click();
 document.body.removeChild(link);
 });
+
+document.getElementById('migratePlanet')
+    ?.addEventListener('click', function() {
+        PlanetMigration.showMigrationModal();
+    });
 </script>
 <script src="js/gitEducation.js"></script>
+<script src="js/planetMigration.js"></script>
   </body>
 </html>
